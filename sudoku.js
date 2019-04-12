@@ -9,7 +9,7 @@ function setup() {
   frameRate(1);
   this.base = 3
   this.nrc = false
-  this.jigsaw = true;
+  this.jigsaw = true; 
 
   my_sudoku = new sudoku(this.base, this.nrc )
   
