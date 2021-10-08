@@ -1,4 +1,4 @@
-var my_sudoku;
+let my_sudoku;
 
 
 //============================================================
@@ -19,7 +19,7 @@ function setup() {
   this.gui.add(this, "nrc")
   this.gui.add(this, "jigsaw")
   this.gui.add(this, "create")
-  var gui_inp = this.gui.addFolder('special')
+  let gui_inp = this.gui.addFolder('special')
   this.sudoku_str = "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......"
   gui_inp.add(this, "solve_input_sudoku")
   gui_inp.add(this, "sudoku_str")
@@ -27,14 +27,14 @@ function setup() {
 }
 
 function create() {
-  var iterations
-  var start = Date.now()
+  let iterations
+  let start = Date.now()
   my_sudoku = new sudoku(parseInt(this.base), this.nrc, this.jigsaw )
   iterations = my_sudoku.solve();
   console.log ( " creation " + iterations)
   my_sudoku.consoleLog()
   iterations = my_sudoku.swipe();
-  var end = Date.now()
+  let end = Date.now()
   console.log( " swiped " + iterations + " d_time " + (end - start)/1000 + " it_time: " + iterations/(end - start))
   my_sudoku.consoleLog()
   my_sudoku.consoleLog2()
@@ -51,7 +51,7 @@ function solve_input_sudoku() {
 
 //============================================================
 function draw() {
-  var canv_size ;
+  let canv_size ;
   if (windowWidth < windowHeight) {
     canv_size = windowWidth
   } else{
@@ -78,37 +78,37 @@ class sudoku {
     // create all cells
     this.cells = new Array(this.depth)
     this.cells_all = new Array(this.cell_cnt)
-    for (var r = 0; r < this.depth; r++) {
+    for (let r = 0; r < this.depth; r++) {
       this.cells[r] = new Array(this.depth)
-      for ( var c = 0; c < this.depth ; c++) {
+      for ( let c = 0; c < this.depth ; c++) {
         this.cells[r][c] = new Cell(this.depth, r,c);
         this.cells_all[r*this.depth + c] = this.cells[r][c]
       }
     }
 
     //create line fields (arrays of cells)
-    for (var r = 0 ; r < this.depth; r++){
-      var field = new Field("column")
-      for ( var c = 0; c < this.depth ; c++) {
+    for (let r = 0 ; r < this.depth; r++){
+      let field = new Field("column")
+      for ( let c = 0; c < this.depth ; c++) {
         field.addCell(this.cells[r][c])
         this.cells[r][c].addField(field)
       }
     }
-    for (var c = 0 ; c < this.depth; c++){
-      var field = new Field("row")
-      for ( var r = 0; r < this.depth ; r++) {
+    for (let c = 0 ; c < this.depth; c++){
+      let field = new Field("row")
+      for ( let r = 0; r < this.depth ; r++) {
         field.addCell(this.cells[r][c])
         this.cells[r][c].addField(field)
       }
     }
-    var square_fields = []
-    var colors1 = [[color("red"), color("blue"), color("green")],
+    let square_fields = []
+    let colors1 = [[color("red"), color("blue"), color("green")],
                   [color("yellow"), color("magenta"), color("cyan")],
                   [color("white"), color("purple"), color("orange")]];
-    var colors = []
-    for ( var r = 0; r < this.base; r ++) {
-      var col_row = [] 
-      for ( var c = 0; c < this.base; c ++) {
+    let colors = []
+    for ( let r = 0; r < this.base; r ++) {
+      let col_row = [] 
+      for ( let c = 0; c < this.base; c ++) {
         if ( (r < colors1.length) && (c < colors1[r].length) ) {
           col_row.push(colors1[r][c])
         } else {
@@ -119,12 +119,12 @@ class sudoku {
     }
 
     // Create the sudoku fields: There are 9 when your base is 3.
-    for (var fi = 0; fi < this.base; fi++) {
-      for (var fj = 0; fj < this.base; fj++) {
-        var field = new Field("square", colors[fi][fj])
+    for (let fi = 0; fi < this.base; fi++) {
+      for (let fj = 0; fj < this.base; fj++) {
+        let field = new Field("square", colors[fi][fj])
         square_fields.push(field);
-        for (var r = fi*this.base; r < fi*this.base+this.base; r++) {
-          for (var c = fj*this.base; c < fj*this.base+this.base; c++) {
+        for (let r = fi*this.base; r < fi*this.base+this.base; r++) {
+          for (let c = fj*this.base; c < fj*this.base+this.base; c++) {
             field.addCell(this.cells[r][c])
             this.cells[r][c].addField(field)
           }
@@ -137,7 +137,7 @@ class sudoku {
         {
           for (let b = 0; b < (this.base-1); b++)
           {
-              var field = new Field("nrc")
+              let field = new Field("nrc")
               for (let fr = 0; fr < this.base; fr++)
               {
                 for (let fc = 0; fc < this.base; fc++)
@@ -159,7 +159,7 @@ class sudoku {
       for (let i = 0 ; i < 100; i ++) {
         let r =  Math.floor(random(0, this.depth))
         let c =  Math.floor(random(0, this.depth))
-        var cell_a = this.cells[r][c];
+        let cell_a = this.cells[r][c];
         for (let cell_c of this.cells_all) {
           if (cell_a != cell_c) {
             if (cell_a.fields["square"] != cell_c.fields["square"]) {
@@ -183,7 +183,7 @@ class sudoku {
   // overall solver
   solve() {
     this.iteration_counter = 0
-    var unfilled_cells = []
+    let unfilled_cells = []
     //arrayShuffle(this.cells_all)
     for (let cell of this.cells_all){
       if (cell.value == 0) {
@@ -198,22 +198,22 @@ class sudoku {
   swipe() {
     this.iteration_counter = 0
     // let's check all cells if we can set them empty
-    var unfilled_cells_final = []
-    var swipe_cells = this.cells_all
+    let unfilled_cells_final = []
+    let swipe_cells = this.cells_all
     arrayShuffle(swipe_cells) //<-- this makes things really hard....
     for (let cell of swipe_cells){
-      var unfilled_cells = []
+      let unfilled_cells = []
       for (let unfilled_cell of unfilled_cells_final) {
         unfilled_cell.clear()
         unfilled_cells.push(unfilled_cell)
       }
 
-      var cell_value_backup = cell.value
+      let cell_value_backup = cell.value
       cell.value = 0
       
       unfilled_cells.push(cell)
       unfilled_cells.sort(function(a,b) {return a.compare(b)})
-      var no_sol = this.solve_cells(unfilled_cells, 0, 2)
+      let no_sol = this.solve_cells(unfilled_cells, 0, 2)
       if (no_sol == 2) {
         cell.value = cell_value_backup
       } else {
@@ -239,20 +239,20 @@ class sudoku {
       no_solutions_found ++
     } else {
       // get next cell,
-      var shortest = this.depth + 1;
-      var next_cell_index
+      let shortest = this.depth + 1;
+      let next_cell_index
       for (let unfilled_cell_index in unfilled_cells) {
-        var unfilled_cell_pos_vals = unfilled_cells[unfilled_cell_index].getPossibleValues().length
+        let unfilled_cell_pos_vals = unfilled_cells[unfilled_cell_index].getPossibleValues().length
         if (unfilled_cell_pos_vals < shortest ) {
           shortest = unfilled_cell_pos_vals
           next_cell_index = unfilled_cell_index
         }
       }
-      var next_cell = unfilled_cells.splice(next_cell_index,1)[0]
-      //var next_cell = unfilled_cells.pop()
+      let next_cell = unfilled_cells.splice(next_cell_index,1)[0]
+      //let next_cell = unfilled_cells.pop()
       
       // itterate through solutions.
-      var possible_values = next_cell.getPossibleValues()
+      let possible_values = next_cell.getPossibleValues()
       arrayShuffle(possible_values)
       for (let possible_value of possible_values) {
         next_cell.fillPossibleValue(possible_value)
@@ -276,19 +276,19 @@ class sudoku {
     background(255, 255, 255);
 
     // first cells
-    var base_w = size / this.base
-    var cell_w = size / this.depth
-    var f_size = cell_w/2
+    let base_w = size / this.base
+    let cell_w = size / this.depth
+    let f_size = cell_w/2
     textSize(f_size)
     textAlign(CENTER, CENTER);
-    for (var r = 0 ; r < this.depth; r++) {
-      for ( var c = 0; c < this.depth ; c++) {
+    for (let r = 0 ; r < this.depth; r++) {
+      for ( let c = 0; c < this.depth ; c++) {
         strokeWeight(0)
         fill(this.cells[r][c].color())
         rect(r*cell_w, c*cell_w, cell_w, cell_w)
         fill("black")
-        var x = (r+0.5) * cell_w
-        var y = (c+0.5) * cell_w
+        let x = (r+0.5) * cell_w
+        let y = (c+0.5) * cell_w
         text(this.cells[r][c].toString(), x, y )
       }
     }
@@ -296,15 +296,15 @@ class sudoku {
     // lines afterwards
     stroke("black")
     if(!this.jigsaw) {
-      for (var l = 1 ; l < this.base; l++){
-        var x = base_w * l
+      for (let l = 1 ; l < this.base; l++){
+        let x = base_w * l
         strokeWeight(5)
         line(0, x, size, x);
         line(x, 0, x, size);
       }
     }
-    for (var l = 1 ; l < this.depth; l++){
-      var x = cell_w * l
+    for (let l = 1 ; l < this.depth; l++){
+      let x = cell_w * l
       strokeWeight(1)
       line(0, x, size, x);
       line(x, 0, x, size);
@@ -315,7 +315,7 @@ class sudoku {
     // exampl : 4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......
     // http://magictour.free.fr/top95
     for (let i = 0; i < this.cell_cnt; i++) {
-      var v = sudo_str.charAt(i)
+      let v = sudo_str.charAt(i)
       if (v == '.') {
         this.cells_all[i].clear()
       } else {
@@ -326,7 +326,7 @@ class sudoku {
 
   //
   getNeighbours(cell) {
-    var neighbours = [] 
+    let neighbours = [] 
     if (cell.r > 0) {
       neighbours.push(this.cells[cell.r-1][cell.c])
     }
@@ -344,7 +344,7 @@ class sudoku {
 
   //
   isValidField(cell){
-    var field_neighbours = new Set();
+    let field_neighbours = new Set();
     this.addFieldNeighbours(field_neighbours, cell)
     return (field_neighbours.size == this.depth) 
   }
@@ -360,8 +360,8 @@ class sudoku {
 
   //swap square field cell
   swapField(cell_a, cell_b) {
-    var sq_field_a = cell_a.fields["square"]
-    var sq_field_b = cell_b.fields["square"]
+    let sq_field_a = cell_a.fields["square"]
+    let sq_field_b = cell_b.fields["square"]
     cell_a.fields["square"] = sq_field_b
     cell_b.fields["square"] = sq_field_a
     sq_field_a.addCell(cell_b)
@@ -372,9 +372,9 @@ class sudoku {
 
   //-----------
   consoleLog() {
-    for (var r = 0 ; r < this.depth; r++){
+    for (let r = 0 ; r < this.depth; r++){
       let str = ""
-      for ( var c = 0; c < this.depth ; c++) {
+      for ( let c = 0; c < this.depth ; c++) {
         str += this.cells[c][r] + " "
       }
       console.log(str)
@@ -383,8 +383,8 @@ class sudoku {
   //-----------
   consoleLog2() {
     let str = ""
-    for (var r = 0 ; r < this.depth; r++){
-      for ( var c = 0; c < this.depth ; c++) {
+    for (let r = 0 ; r < this.depth; r++){
+      for ( let c = 0; c < this.depth ; c++) {
         str += this.cells[c][r] + ""
       }
     } 
@@ -436,7 +436,7 @@ class Cell {
   //-----------
   getPossibleValues() 
   {
-    var possible_values = []
+    let possible_values = []
     if (this.value == 0) {
       // init 
       let values = [this.depth+1]
@@ -461,7 +461,7 @@ class Cell {
   }
 
   color() {
-    var kleur = color(this.fields["square"].color)
+    let kleur = color(this.fields["square"].color)
     if ("nrc" in this.fields) {
       kleur = color("grey")
     }
