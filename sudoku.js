@@ -157,8 +157,8 @@ class sudoku {
     if (jigsaw) {
       console.log("jigsaw")
       for (let i = 0 ; i < 100; i ++) {
-        let r =  Math.floor(random(0, this.depth))
-        let c =  Math.floor(random(0, this.depth))
+        let r =  Math.floor(random()* this.depth)
+        let c =  Math.floor(random()* this.depth)
         let cell_a = this.cells[r][c];
         for (let cell_c of this.cells_all) {
           if (cell_a != cell_c) {
