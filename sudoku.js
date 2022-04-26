@@ -1,5 +1,11 @@
 let my_sudoku;
 
+let settings = {}
+settings.base = 2
+settings.nrc = false
+settings.jigsaw = false; 
+
+settings.show_possiblilites = true
 
 //============================================================
 function setup() {
@@ -7,29 +13,29 @@ function setup() {
   createCanvas(windowHeight, windowHeight);
   
   frameRate(1);
-  this.base = 3
-  this.nrc = false
-  this.jigsaw = true; 
 
-  my_sudoku = new sudoku(this.base, this.nrc )
+
+  my_sudoku = new sudoku(settings.base, settings.nrc )
   
 
   this.gui = new dat.GUI();
-  this.gui.add(this, "base", [2, 3, 4])
-  this.gui.add(this, "nrc")
-  this.gui.add(this, "jigsaw")
+  this.gui.add(settings, "base", [2, 3, 4])
+  this.gui.add(settings, "nrc")
+  this.gui.add(settings, "jigsaw")
   this.gui.add(this, "create")
   let gui_inp = this.gui.addFolder('special')
   this.sudoku_str = "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......"
   gui_inp.add(this, "solve_input_sudoku")
   gui_inp.add(this, "sudoku_str")
+  gui_inp.add(settings, "show_possiblilites")
+  
 
 }
 
 function create() {
   let iterations
   let start = Date.now()
-  my_sudoku = new sudoku(parseInt(this.base), this.nrc, this.jigsaw )
+  my_sudoku = new sudoku(parseInt(settings.base), settings.nrc, settings.jigsaw )
   iterations = my_sudoku.solve();
   console.log ( " creation " + iterations)
   my_sudoku.consoleLog()
@@ -289,7 +295,24 @@ class sudoku {
         fill("black")
         let x = (r+0.5) * cell_w
         let y = (c+0.5) * cell_w
-        text(this.cells[r][c].toString(), x, y )
+        if (settings.show_possiblilites) {
+          if (this.cells[r][c].value != 0) {
+            textSize(f_size)
+            text(this.cells[r][c].toString(), x, y )
+          } else {
+            let cd_w = cell_w / this.base
+            let cd_h = cell_w / this.base
+            let pvs = this.cells[r][c].getPossibleValues()
+            textSize(f_size/this.base)
+            for (let pv of pvs) {
+              let cd_x = r*cell_w + ((pv-1)%this.base + 0.5)*cd_h
+              let cd_y = c*cell_w + (Math.floor((pv-1)/this.base) + 0.5)*cd_w
+              text(String(pv), cd_x, cd_y )
+            } 
+          }
+        } else {
+          text(this.cells[r][c].toString(), x, y )
+        }
       }
     }
 
