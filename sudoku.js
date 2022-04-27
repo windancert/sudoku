@@ -23,9 +23,10 @@ function setup() {
   this.gui.add(settings, "nrc")
   this.gui.add(settings, "jigsaw")
   this.gui.add(this, "create")
+  this.gui.add(this, "solve")
   let gui_inp = this.gui.addFolder('special')
   this.sudoku_str = "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......"
-  gui_inp.add(this, "solve_input_sudoku")
+  gui_inp.add(this, "set_input_sudoku")
   gui_inp.add(this, "sudoku_str")
   gui_inp.add(settings, "show_possiblilites")
   
@@ -48,10 +49,15 @@ function create() {
 
 }
 
-function solve_input_sudoku() {
-  console.log("solving on request")
+function set_input_sudoku() {
+  console.log("set input sudoku")
   my_sudoku = new sudoku(3, false)
   my_sudoku.setSudokuStr(this.sudoku_str)
+  // my_sudoku.solve();
+}
+
+function solve(){
+  console.log("solving")
   my_sudoku.solve();
 }
 
@@ -65,6 +71,10 @@ function draw() {
   }
   my_sudoku.draw(canv_size-20)
 
+}
+
+function mousePressed() {
+  my_sudoku.click(mouseX, mouseY)
 }
 
 
@@ -276,41 +286,56 @@ class sudoku {
     return no_solutions_found;
   }
 
+  click(x,y) {
+    if ((x < this.size) && (y < this.size)) {
+      let fr = Math.floor(y / this.base_w) % this.depth
+      let fc = Math.floor(x / this.base_w) % this.depth
+      let cr = Math.floor(y / this.cell_w) % this.depth
+      let cc = Math.floor(x / this.cell_w) % this.depth
+      console.log("f r c  " + String(fr) + " " + String(fc))
+      console.log("c r c  " + String(cr) + " " + String(cc))
+  
+     
+    }
+  }
 
   //-----------
   draw(size) {
     background(255, 255, 255);
+    this.size = size
 
     // first cells
-    let base_w = size / this.base
-    let cell_w = size / this.depth
-    let f_size = cell_w/2
+    this.base_w = size / this.base
+    this.cell_w = size / this.depth
+    let f_size = this.cell_w/2
     textSize(f_size)
     textAlign(CENTER, CENTER);
     for (let r = 0 ; r < this.depth; r++) {
       for ( let c = 0; c < this.depth ; c++) {
         strokeWeight(0)
         fill(this.cells[r][c].color())
-        rect(r*cell_w, c*cell_w, cell_w, cell_w)
-        fill("black")
-        let x = (r+0.5) * cell_w
-        let y = (c+0.5) * cell_w
+        rect(r*this.cell_w, c*this.cell_w, this.cell_w, this.cell_w)
+        let x = (r+0.5) * this.cell_w
+        let y = (c+0.5) * this.cell_w
         if (settings.show_possiblilites) {
           if (this.cells[r][c].value != 0) {
+            fill("black")
             textSize(f_size)
             text(this.cells[r][c].toString(), x, y )
           } else {
-            let cd_w = cell_w / this.base
-            let cd_h = cell_w / this.base
+            fill(200)
+            let cd_w = this.cell_w / this.base
+            let cd_h = this.cell_w / this.base
             let pvs = this.cells[r][c].getPossibleValues()
             textSize(f_size/this.base)
             for (let pv of pvs) {
-              let cd_x = r*cell_w + ((pv-1)%this.base + 0.5)*cd_h
-              let cd_y = c*cell_w + (Math.floor((pv-1)/this.base) + 0.5)*cd_w
+              let cd_x = r*this.cell_w + ((pv-1)%this.base + 0.5)*cd_h
+              let cd_y = c*this.cell_w + (Math.floor((pv-1)/this.base) + 0.5)*cd_w
               text(String(pv), cd_x, cd_y )
             } 
           }
         } else {
+          fill("black")
           text(this.cells[r][c].toString(), x, y )
         }
       }
@@ -320,14 +345,14 @@ class sudoku {
     stroke("black")
     if(!this.jigsaw) {
       for (let l = 1 ; l < this.base; l++){
-        let x = base_w * l
+        let x = this.base_w * l
         strokeWeight(5)
         line(0, x, size, x);
         line(x, 0, x, size);
       }
     }
     for (let l = 1 ; l < this.depth; l++){
-      let x = cell_w * l
+      let x = this.cell_w * l
       strokeWeight(1)
       line(0, x, size, x);
       line(x, 0, x, size);
